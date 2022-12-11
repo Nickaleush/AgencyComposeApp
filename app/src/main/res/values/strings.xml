@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">AgencyComposeApp</string>
+    <string name="allFlats">All flats</string>
+    <string name="contracts">Your deals</string>
+    <string name="profile">Profile</string>
+</resources>

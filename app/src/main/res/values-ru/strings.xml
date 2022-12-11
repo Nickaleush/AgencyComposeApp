@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Агентство недвижимости</string>
+    <string name="allFlats">Недвижимость</string>
+    <string name="contracts">Ваши сделки</string>
+    <string name="profile">Профиль</string>
+</resources>
