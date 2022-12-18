@@ -1,69 +1,81 @@
 package com.example.agencycomposeapp.navigation.graphs
 
+import android.app.Activity
+import android.app.Application
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavGraphBuilder
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.navigation
-import com.example.agencycomposeapp.BottomBarScreen
-import com.example.agencycomposeapp.screens.allFlats.AllFlatsScreen
-import com.example.agencycomposeapp.screens.contracts.ContractsScreen
-import com.example.agencycomposeapp.screens.contracts.ProfileScreen
+import com.example.agencycomposeapp.bottomBarItems.BottomBarClientScreen
+import com.example.agencycomposeapp.bottomBarItems.BottomBarDirectorScreen
+import com.example.agencycomposeapp.MainActivity.Companion.DIRECTOR_MODE
+import com.example.agencycomposeapp.MainViewModel
+import com.example.agencycomposeapp.screens.flats.ClientFlatsScreen
+import com.example.agencycomposeapp.screens.flats.AgencyFlatsScreen
+import com.example.agencycomposeapp.screens.flats.AllFlatsScreen
+import com.example.agencycomposeapp.screens.clients.AgencyClientsScreen
+import com.example.agencycomposeapp.screens.profile.DirectorProfileScreen
+import com.example.agencycomposeapp.screens.profile.ClientProfileScreen
 
 @Composable
-fun MainNavGraph(navController: NavHostController) {
-    NavHost(
-        navController = navController,
-        route = Graph.MAIN,
-        startDestination = BottomBarScreen.AllFlats.route
-    ) {
-        composable(route = BottomBarScreen.AllFlats.route) {
-            AllFlatsScreen(
-                name = BottomBarScreen.AllFlats.route,
-                onClick = {
-                    navController.navigate(Graph.DETAILS)
-                }
-            )
-        }
-        composable(route = BottomBarScreen.Contracts.route) {
-            ContractsScreen(
-                name = BottomBarScreen.Contracts.route,
-                onClick = { }
-            )
-        }
-        composable(route = BottomBarScreen.Profile.route) {
-            ProfileScreen(
-                name = BottomBarScreen.Profile.route,
-                onClick = { }
-            )
-        }
-        detailsNavGraph(navController = navController)
-    }
-}
+fun MainNavGraph(navController: NavHostController, modifier: Modifier) {
+    val context = LocalContext.current
+    val application = context.applicationContext as Application
+    val activity = (LocalContext.current as? Activity)
+    if (DIRECTOR_MODE) {
+        NavHost(
+            navController = navController,
+            route = Graph.MAIN,
+            startDestination = BottomBarDirectorScreen.AgencyFlats.route
+        ) {
+            composable(route = BottomBarDirectorScreen.AgencyFlats.route) {
+                AgencyFlatsScreen(
+                    viewModel = MainViewModel(application)
+                )
+            }
 
-fun NavGraphBuilder.detailsNavGraph(navController: NavHostController) {
-    navigation(
-        route = Graph.DETAILS,
-        startDestination = DetailsScreen.Information.route
-    ) {
-        composable(route = DetailsScreen.Information.route) {
-            ContractsScreen(name = DetailsScreen.Information.route) {
-                navController.navigate(DetailsScreen.Overview.route)
+            composable(route = BottomBarDirectorScreen.AgencyClients.route) {
+                AgencyClientsScreen(
+                    viewModel = MainViewModel(application)
+                )
+            }
+
+            composable(route = BottomBarDirectorScreen.ProfileDirector.route) {
+                DirectorProfileScreen(
+                    onClick = {
+                        activity?.finish()
+                    },
+                    viewModel = MainViewModel(application)
+                )
             }
         }
-        composable(route = DetailsScreen.Overview.route) {
-            ContractsScreen(name = DetailsScreen.Overview.route) {
-                navController.popBackStack(
-                    route = DetailsScreen.Information.route,
-                    inclusive = false
+
+    } else {
+        NavHost(
+            navController = navController,
+            route = Graph.MAIN,
+            startDestination = BottomBarClientScreen.AllFlats.route
+        ) {
+            composable(route = BottomBarClientScreen.AllFlats.route) {
+                AllFlatsScreen(
+                    viewModel = MainViewModel(application)
+                )
+            }
+            composable(route = BottomBarClientScreen.Contracts.route) {
+                ClientFlatsScreen(
+                    viewModel = MainViewModel(application)
+                )
+            }
+            composable(route = BottomBarClientScreen.ProfileClient.route) {
+                ClientProfileScreen(
+                    onClick = {
+                        activity?.finish()
+                    }
                 )
             }
         }
     }
 }
 
-sealed class DetailsScreen(val route: String) {
-    object Information : DetailsScreen(route = "INFORMATION")
-    object Overview : DetailsScreen(route = "OVERVIEW")
-}

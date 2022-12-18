@@ -4,36 +4,45 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.example.agencycomposeapp.screens.auth.AuthScreen
-import com.example.agencycomposeapp.screens.contracts.ContractsScreen
+import com.example.agencycomposeapp.MainViewModel
+import com.example.agencycomposeapp.screens.auth.SignInScreen
+import com.example.agencycomposeapp.screens.auth.DirectorSignUpScreen
+import com.example.agencycomposeapp.screens.auth.ClientSignUpScreen
 
-fun NavGraphBuilder.authNavGraph(navController: NavHostController) {
+fun NavGraphBuilder.authNavGraph(navController: NavHostController, viewModel: MainViewModel) {
+
     navigation(
         route = Graph.AUTHENTICATION,
         startDestination = AuthScreen.Login.route
     ) {
+
         composable(route = AuthScreen.Login.route) {
-            AuthScreen(
-                onClick = {
-                    navController.popBackStack()
-                    navController.navigate(Graph.MAIN)
-                },
+            SignInScreen(
                 onSignUpClick = {
                     navController.navigate(AuthScreen.SignUp.route)
                 },
-                onForgotClick = {
-                    navController.navigate(AuthScreen.Forgot.route)
+                onOpenAgencyClick = {
+                    navController.navigate(AuthScreen.OpenAgency.route)
+                },
+                viewModel = viewModel,
+                navController = navController
+            )
+        }
+
+        composable(route = AuthScreen.SignUp.route) {
+            ClientSignUpScreen(viewModel = viewModel,
+                onClick = {
+                    navController.navigate(Graph.MAIN)
                 }
             )
         }
-        composable(route = AuthScreen.SignUp.route) {
-            ContractsScreen(name = AuthScreen.SignUp.route) {
 
-            }
-        }
-        composable(route = AuthScreen.Forgot.route) {
-            ContractsScreen(name = AuthScreen.Forgot.route) {
-            }
+        composable(route = AuthScreen.OpenAgency.route) {
+            DirectorSignUpScreen(viewModel = viewModel,
+                onClick = {
+                    navController.navigate(Graph.MAIN)
+                }
+            )
         }
     }
 }
@@ -41,5 +50,5 @@ fun NavGraphBuilder.authNavGraph(navController: NavHostController) {
 sealed class AuthScreen(val route: String) {
     object Login : AuthScreen(route = "LOGIN")
     object SignUp : AuthScreen(route = "SIGN_UP")
-    object Forgot : AuthScreen(route = "FORGOT")
+    object OpenAgency : AuthScreen(route = "OPEN_AGENCY")
 }
